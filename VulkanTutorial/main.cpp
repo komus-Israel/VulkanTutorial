@@ -27,6 +27,10 @@ private:
     
     GLFWwindow* window;
     VkInstance instance;
+    uint32_t glfwExtensionCount = 0;
+    const char** glfwExtensions;
+    
+    
     
     void initWindow(){
         
@@ -63,6 +67,16 @@ private:
         appInfo.pEngineName = "No Engine";
         appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
         appInfo.apiVersion = VK_API_VERSION_1_0;
+        
+        /// Struct is not optional and tells the Vulkan driver which global extensions and validation layers we want to use
+        VkInstanceCreateInfo createInfo{};
+        createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+        createInfo.pApplicationInfo = &appInfo;
+        
+        glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+        createInfo.enabledExtensionCount = glfwExtensionCount;
+        createInfo.ppEnabledExtensionNames = glfwExtensions;
+        createInfo.enabledLayerCount = 0;
         
     }
     
