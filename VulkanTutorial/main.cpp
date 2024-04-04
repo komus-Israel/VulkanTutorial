@@ -1,26 +1,22 @@
 #define GLFW_INCLUDE_VULKAN
-#include "GLFW/glfw3.h"
-#include <vulkan/vulkan.h> ///  To provide functions, structures and enumerations
+#include <GLFW/glfw3.h> /// GLFW will include its own definitions and automatically load the vulkan header with it
 
-#include <iostream> /// To report and propagate errors
+#include <iostream>   /// To report and propagate errors
 #include <stdexcept> /// To report and propagate errors
 #include <cstdlib> ///  provides the EXIT_SUCCESS and EXIT_FAILURE macros.
 
 class HelloTriangleApplication {
-    
     
 public:
     
     const uint32_t WIDTH = 800;
     const uint32_t HEIGHT = 600;
     
-    
-    
-    void run (){
+    void run(){
         initWindow();
         initVulkan();
         mainLoop();
-        cleanUp();
+        cleanup();
     }
     
 private:
@@ -28,76 +24,85 @@ private:
     GLFWwindow* window;
     VkInstance instance;
     
-    void initWindow(){
+    /// To initialize GLFW
+    void initWindow() {
         
-        /// The very first call in initWindow should be glfwInit() which initializes the GLFW library.
+        /// 1. Initlalize the GLFW library
         glfwInit();
         
-        /// Because GLFW was originally designed to create an OpenGL context, we need to tell it to not create an OpenGL context with a subsequent call
+        /// 2.  GLFW was originally designed to create an OPENGL context, we need to tell it not to
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         
-        /// Because handling resized windows takes special care that we'll look into later, disable it for now with another window hint call
+        /// 3. Disable windows resize for now. Takes special care to handle resize
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
         
-        /// All that's left now is creating the actual window. Add a GLFWwindow* window; private class member to store a reference to it and initialize the window
-        /// The first three parameters specify the width, height and title of the window. The fourth parameter allows you to optionally specify a monitor to open the window on and the last parameter is only relevant to OpenGL
-        window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan Window Creation", nullptr, nullptr);
+        /// 4. Create the actual window
+        window = glfwCreateWindow(800, 600, "Vulkan Tutorial", nullptr, nullptr);
         
-        
-    
     }
     
-    /// initialize vulkan object
-    void initVulkan(){
-         
-    }
-    
+    /// create vulkan instance
+    /// the instance is the connection between the application and the vulkan library
     void createInstance(){
         
-        /// Optional struct: Information about the application
+        /// To create an instance, fill in a struct with some information about the application
+        /// This struct is optional
         VkApplicationInfo appInfo{};
         
         appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-        appInfo.pApplicationName = "Hello Triangle";
+        appInfo.pApplicationName = "Triangle";
         appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-        appInfo.pEngineName = "No Engine";
+        appInfo.pEngineName = "NO ENGINE";
         appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
         appInfo.apiVersion = VK_API_VERSION_1_0;
         
+        
+        /// This struct isn't optional
+        /// It tells the vulklan driver what global extentions and validation layers we want to use
+        /// Global here means that they apply to the entire program and not a specific device
+        
+        VkInstanceCreateInfo createInfo{};
+        
+        createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+        createInfo.pApplicationInfo = &appInfo;
+    }
+
+    void initVulkan() {
+        
     }
     
-    /// render frames
+    /// to render frames
     void mainLoop(){
         
-        /// To keep the application running until either an error occurs or the window is closed, we need to add an event loop to the mainLoop function as follows:
-        
+        /// To keep the application running until either an error occurs or the window is closed, add ab event loop
         while (!glfwWindowShouldClose(window)) {
             glfwPollEvents();
         }
         
     }
     
-    /// deallocate memory
-    void cleanUp(){
-        
-        /// Once the window is closed, we need to clean up resources by destroying it and terminating GLFW itself
+    /// once window is closed and mainLoop returns, resources will be deallocated using this function
+    /// terminate window, clean up resources by destroying it and terminating GLFW
+    void cleanup() {
         glfwDestroyWindow(window);
         glfwTerminate();
-        
     }
     
 };
 
 
+
 int main(){
+   
     HelloTriangleApplication app;
     
-    try{
+    try {
         app.run();
-    } catch(const std::exception& e) {
+    } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
         return EXIT_FAILURE;
     }
     
     return EXIT_SUCCESS;
+    
 }
