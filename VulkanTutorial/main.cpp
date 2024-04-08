@@ -23,6 +23,8 @@ private:
     
     GLFWwindow* window;
     VkInstance instance;
+    uint32_t glfwExtensionCount = 0;
+    const char** glfwExtensions;
     
     /// To initialize GLFW
     void initWindow() {
@@ -65,6 +67,17 @@ private:
         
         createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
         createInfo.pApplicationInfo = &appInfo;
+        
+        /// vulkan is a platform agnostic API
+        /// meaning, it needs an extension to interface with the window system
+        glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+        
+        /// these two members of the struct determine the global validation layers to enable
+        createInfo.enabledExtensionCount = glfwExtensionCount;
+        createInfo.ppEnabledExtensionNames = glfwExtensions;
+        
+        createInfo.enabledLayerCount = 0;
+        
     }
 
     void initVulkan() {
