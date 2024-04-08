@@ -78,6 +78,16 @@ private:
         
         createInfo.enabledLayerCount = 0;
         
+        /// create the instance and store the result in the `result` variable
+        /// If everything goes well, the handle to the instance is stored in the VkInstance class member
+        /// `NOTE:` nearly all vulkan functions return a value of type VkResult that is either `VK_SUCCESS` or an `error code`
+        /// `VkResult result = vkCreateInstance(&createInfo, nullptr, &instance);`
+        /// To check if the instance was created successfully, instead of storing the result, the success status can be checked like this instead:
+        
+        if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
+            throw std::runtime_error("Failed to create Instance!");
+        }
+        
     }
 
     void initVulkan() {
