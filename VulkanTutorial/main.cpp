@@ -106,7 +106,9 @@ private:
     
     /// once window is closed and mainLoop returns, resources will be deallocated using this function
     /// terminate window, clean up resources by destroying it and terminating GLFW
+    /// VkInstance should be only destroyed right before the program exits. It can be destroyed using the `vkDestroyInstance` function
     void cleanup() {
+        vkDestroyInstance(instance, nullptr);
         glfwDestroyWindow(window);
         glfwTerminate();
     }
