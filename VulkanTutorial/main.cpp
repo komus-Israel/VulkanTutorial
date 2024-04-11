@@ -37,6 +37,7 @@ private:
     GLFWwindow* window;
     VkInstance instance;
     uint32_t glfwExtensionCount = 0;
+    uint32_t deviceCount = 0;
     const char** glfwExtensions;
     
     /// To initialize GLFW
@@ -203,7 +204,47 @@ private:
         return true;
     }
     
+    /// After initializing vulkan lib via the VkInstance, we need to look for and select a graphics card in the system tjat supports the feature we need
+    void pickPhysicalDevice(){
+        
+        /// the graphics card will be stored in a `VkPhysicalDevice handle`
+        VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+        
+        /// Listing the graphics card is very similar to the listing extensions and starts with querying just the number
+        vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+        
+        /// If there are 0 devices with vulkan support then there is no point going further
+        if (deviceCount == 0) {
+            throw std::runtime_error("Failed to find GPUS with vulkan support!");
+        }
+        
+        /// otherwise, we can now allocate an array to hold all the VkPhysicalDevice handles
+        std::vector<VkPhysicalDevice> devices(deviceCount);
+        vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
+        
+        /// Now, we need to evaluate each of them and check if they are
+        /// suitable for the operations we want to perform because not all graphics cards are created equal
+        /// for this, call the function created for this purpose `isDeviceSuitable`
+        /// And we will check if any of the physical devices meet the requirements that we will add to the function
+        
+        for (const auto& device : devices) {
+            if (isDeviceSuitable(device)) {
+                physicalDevice = device;
+                break;
+            }
+        }
+        
+        if (physicalDevice == VK_NULL_HANDLE) {
+            throw std::runtime_error("Failed to find a suitable GPU!");
+        }
+        
     
+        
+    }
+    
+    bool isDeviceSuitable(VkPhysicalDevice device) {
+        return true;
+    }
 };
 
 
