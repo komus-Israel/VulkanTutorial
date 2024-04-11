@@ -3,7 +3,7 @@
 
 #include <iostream>   /// To report and propagate errors
 #include <stdexcept> /// To report and propagate errors
-#include <cstdlib> ///  provides the EXIvalidT_SUCCESS and EXIT_FAILURE macros.
+#include <cstdlib> ///  provides the EXIT_SUCCESS and EXIT_FAILURE macros.
 #include <vector>
 #include <cstring> /// for strcmp
 
@@ -60,6 +60,11 @@ private:
     /// the instance is the connection between the application and the vulkan library
     void createInstance(){
         
+        /// validation layer check
+        if (enableValidationLayers && !checkValidationLayerSupport()){
+            throw std::runtime_error("Validation Layer Requested, but not found");
+        }
+        
         /// To create an instance, fill in a struct with some information about the application
         /// This struct is optional
         VkApplicationInfo appInfo{};
@@ -77,6 +82,16 @@ private:
         /// Global here means that they apply to the entire program and not a specific device
         
         VkInstanceCreateInfo createInfo{};
+        
+        /// modity the `VkInstanceCreateInfo` struct instantiation to include the
+        /// validation layer names if they are enabled
+        
+        if (enableValidationLayers) {
+            createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+            createInfo.ppEnabledLayerNames = validationLayers.data();
+        } else {
+            createInfo.enabledLayerCount = 0;
+        }
         
         createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
         createInfo.pApplicationInfo = &appInfo;
@@ -128,6 +143,7 @@ private:
     
     
     /// Add a method that checks if all of the requested validation layers are available
+    /// this method can be called in the `createInsance` method
     bool checkValidationLayerSupport() {
         
         uint32_t layerCount;
