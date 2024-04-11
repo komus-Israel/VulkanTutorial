@@ -4,6 +4,7 @@
 #include <iostream>   /// To report and propagate errors
 #include <stdexcept> /// To report and propagate errors
 #include <cstdlib> ///  provides the EXIT_SUCCESS and EXIT_FAILURE macros.
+#include <vector>
 
 class HelloTriangleApplication {
     
@@ -113,6 +114,7 @@ private:
         glfwTerminate();
     }
     
+    
 };
 
 
@@ -131,3 +133,13 @@ int main(){
     return EXIT_SUCCESS;
     
 }
+
+
+
+/// `NOTES ON VALIDATION LAYERS`
+/// Common operations iin validation layers are:
+/// 1.  Checking the values of parameters against the specification to detect misuse
+/// 2.  Tracking creation and destruction of objects to find resource leaks
+/// 3.  Checking thread safety by tracking the threads that calls originate from
+/// 4.  Logging every call and its parameters to the standard output
+/// 5.  Tracing vulkan calls for  profiling and replaying
