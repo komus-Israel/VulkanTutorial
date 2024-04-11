@@ -3,8 +3,9 @@
 
 #include <iostream>   /// To report and propagate errors
 #include <stdexcept> /// To report and propagate errors
-#include <cstdlib> ///  provides the EXIT_SUCCESS and EXIT_FAILURE macros.
+#include <cstdlib> ///  provides the EXIvalidT_SUCCESS and EXIT_FAILURE macros.
 #include <vector>
+#include <cstring> /// for strcmp
 
 class HelloTriangleApplication {
     
@@ -12,6 +13,17 @@ public:
     
     const uint32_t WIDTH = 800;
     const uint32_t HEIGHT = 600;
+    
+    const std::vector<const char*> validationLayers = {
+        "VK_LAYER_KHRONOS_validation"
+    };
+    
+/// `NDEBUG` macro is a c++ standard. It means `not debug`
+#ifdef NDEBUG
+    const bool enableValidationLayers = false;
+#else
+    const bool enableValidationLayers = true;
+#endif
     
     void run(){
         initWindow();
@@ -112,6 +124,45 @@ private:
         vkDestroyInstance(instance, nullptr);
         glfwDestroyWindow(window);
         glfwTerminate();
+    }
+    
+    
+    /// Add a method that checks if all of the requested validation layers are available
+    bool checkValidationLayerSupport() {
+        
+        uint32_t layerCount;
+        
+        /// why is this initialized with a null pointer
+        vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+        
+        /// declare vector of type `VkLayerProperties` and size `layerCount`
+        std::vector<VkLayerProperties> availableLayers(layerCount);
+        
+        /// and why is this reinitialized with the vector
+        vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+        
+        /// next, check if all of  the layers in `validationLayers` exist in the `availableLayers` list
+        /// #include <cstring> for strcmp
+        
+        for (const char* layerName : validationLayers) {
+            bool layerFound = false;
+            
+            /// auto detects the data type
+            for (const auto& layerProperties : availableLayers ) {
+                
+                if (strcmp(layerName, layerProperties.layerName) == 0) {
+                    layerFound = true;
+                    break;
+                }
+                
+            }
+            
+            if (!layerFound){
+                return false;
+            }
+        }
+        
+        return true;
     }
     
     
