@@ -153,6 +153,7 @@ private:
 
     void initVulkan() {
         createInstance();
+        pickPhysicalDevice();
     }
     
     /// to render frames
