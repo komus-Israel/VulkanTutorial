@@ -15,6 +15,12 @@ public:
     const uint32_t WIDTH = 800;
     const uint32_t HEIGHT = 600;
     
+    /// the graphics card will be stored in a `VkPhysicalDevice handle`
+    VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+    
+    /// class member to store the logical device handle
+    VkDevice device;
+    
     const std::vector<const char*> validationLayers = {
         "VK_LAYER_KHRONOS_validation"
     };
@@ -154,6 +160,7 @@ private:
     void initVulkan() {
         createInstance();
         pickPhysicalDevice();
+        createLogicalDevice();
     }
     
     /// to render frames
@@ -169,7 +176,9 @@ private:
     /// once window is closed and mainLoop returns, resources will be deallocated using this function
     /// terminate window, clean up resources by destroying it and terminating GLFW
     /// VkInstance should be only destroyed right before the program exits. It can be destroyed using the `vkDestroyInstance` function
+    /// The device should be destroyed before instance termination
     void cleanup() {
+        vkDestroyDevice(device, nullptr);
         vkDestroyInstance(instance, nullptr);
         glfwDestroyWindow(window);
         glfwTerminate();
@@ -217,9 +226,6 @@ private:
     
     /// After initializing vulkan lib via the VkInstance, we need to look for and select a graphics card in the system tjat supports the feature we need
     void pickPhysicalDevice(){
-        
-        /// the graphics card will be stored in a `VkPhysicalDevice handle`
-        VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
         
         /// Listing the graphics card is very similar to the listing extensions and starts with querying just the number
         vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
@@ -288,6 +294,60 @@ private:
         // Assign index to queue families that could be found
         return indices;
         
+    }
+    
+    /// After selecting a physical device, a `logical device` needs to be setup to interface with it
+    /// This creation process is similar to the instance creation process and describes the features we want to use
+    /// We also need to specify which queues to create now that we've queried which queue families are available
+    void createLogicalDevice(){
+        
+        /// specify the queues to be created
+        /// The creation of a logical device involves specifying a bunch of details in structs again
+        /// of which the first one will be `VkDeviceQueueCreateInfo`
+        /// This struct describes the number of queues we want for a single queue family
+        /// Right now, we're only interested in a queue with graphics capabilities
+        
+        QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
+        
+        VkDeviceQueueCreateInfo queueCreateInfo{};
+        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
+        queueCreateInfo.queueCount = 1;
+        
+        float queuePriority = 1.0f;
+        queueCreateInfo.pQueuePriorities = &queuePriority;
+        
+        /// specifying used device features
+        VkPhysicalDeviceFeatures deviceFeatures{};
+        
+        /// Creating the logical device
+        /// with the previous tow structures in place, we can start filling in the main `VkDeviceCreateInfo` structure
+        VkDeviceCreateInfo createInfo{};
+        createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+        
+        /// first add pointers to the queue creation info and device features structs
+        createInfo.pQueueCreateInfos = &queueCreateInfo;
+        createInfo.queueCreateInfoCount = 1;
+        createInfo.pEnabledFeatures = &deviceFeatures;
+        
+        
+        /// Previous implementations of Vulkan made a distinction between instance and device specific validation layers, but this is no longer the case. That means that the
+        /// enabledLayerCount and ppEnabledLayerNames fields of VkDeviceCreateInfo
+        /// are ignored by up-to-date implementations. However, it is still a good idea to
+        /// set them anyway to be compatible with older implementations:
+    
+        createInfo.enabledExtensionCount = 0;
+        
+        if (enableValidationLayers) {
+            createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+            createInfo.ppEnabledLayerNames = validationLayers.data();
+        } else {
+            createInfo.enabledLayerCount = 0;
+        }
+        
+        if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
+            throw std::runtime_error("Failed to create logical device");
+        }
     }
     
 
