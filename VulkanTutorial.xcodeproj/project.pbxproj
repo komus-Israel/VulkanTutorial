@@ -13,8 +13,6 @@
 		C89CC7B02B70227500483CFA /* libvulkan.1.3.275.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C89CC7AF2B70227500483CFA /* libvulkan.1.3.275.dylib */; };
 		C89CC7B22B70227C00483CFA /* libvulkan.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C89CC7B12B70227C00483CFA /* libvulkan.1.dylib */; };
 		C89CC7B42B70231500483CFA /* libglfw.3.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C89CC7B32B70231500483CFA /* libglfw.3.3.dylib */; };
-		C8CE732D2BC881BA00345561 /* physicalDevices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C8CE732C2BC881BA00345561 /* physicalDevices.cpp */; };
-		C8CE732F2BCAAB6800345561 /* QueueFamilies.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C8CE732E2BCAAB6800345561 /* QueueFamilies.cpp */; };
 		C8FB3A582B6D447200EBE599 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C8FB3A572B6D447200EBE599 /* main.cpp */; };
 /* End PBXBuildFile section */
 
@@ -37,8 +35,6 @@
 		C89CC7AF2B70227500483CFA /* libvulkan.1.3.275.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvulkan.1.3.275.dylib; path = ../../../../VulkanSDK/macOS/lib/libvulkan.1.3.275.dylib; sourceTree = "<group>"; };
 		C89CC7B12B70227C00483CFA /* libvulkan.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvulkan.1.dylib; path = ../../../../VulkanSDK/macOS/lib/libvulkan.1.dylib; sourceTree = "<group>"; };
 		C89CC7B32B70231500483CFA /* libglfw.3.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.3.dylib; path = ../../../../../../opt/homebrew/Cellar/glfw/3.3.9/lib/libglfw.3.3.dylib; sourceTree = "<group>"; };
-		C8CE732C2BC881BA00345561 /* physicalDevices.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = physicalDevices.cpp; sourceTree = "<group>"; };
-		C8CE732E2BCAAB6800345561 /* QueueFamilies.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = QueueFamilies.cpp; sourceTree = "<group>"; };
 		C8FB3A542B6D447200EBE599 /* VulkanTutorial */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = VulkanTutorial; sourceTree = BUILT_PRODUCTS_DIR; };
 		C8FB3A572B6D447200EBE599 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -88,8 +84,6 @@
 			isa = PBXGroup;
 			children = (
 				C8FB3A572B6D447200EBE599 /* main.cpp */,
-				C8CE732E2BCAAB6800345561 /* QueueFamilies.cpp */,
-				C8CE732C2BC881BA00345561 /* physicalDevices.cpp */,
 			);
 			path = VulkanTutorial;
 			sourceTree = "<group>";
@@ -151,9 +145,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C8CE732D2BC881BA00345561 /* physicalDevices.cpp in Sources */,
 				C8FB3A582B6D447200EBE599 /* main.cpp in Sources */,
-				C8CE732F2BCAAB6800345561 /* QueueFamilies.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

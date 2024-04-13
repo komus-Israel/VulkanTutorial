@@ -6,6 +6,7 @@
 #include <cstdlib> ///  provides the EXIT_SUCCESS and EXIT_FAILURE macros.
 #include <vector>
 #include <cstring> /// for strcmp
+#include <optional> /// to query if a variable contains a value
 
 class HelloTriangleApplication {
     
@@ -16,6 +17,15 @@ public:
     
     const std::vector<const char*> validationLayers = {
         "VK_LAYER_KHRONOS_validation"
+    };
+    
+    struct QueueFamilyIndices {
+        std::optional<uint32_t> graphicsFamily;
+        
+        /// to make this a little bit more convenient, we will add a generic check to this struct
+        bool isComplete(){
+            return graphicsFamily.has_value();
+        }
     };
     
 /// `NDEBUG` macro is a c++ standard. It means `not debug`
@@ -243,8 +253,45 @@ private:
     }
     
     bool isDeviceSuitable(VkPhysicalDevice device) {
-        return true;
+        QueueFamilyIndices indices = findQueueFamilies(device);
+        return indices.isComplete();
     }
+    
+    /// We are going to look for a queue that supports graphics commands
+    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) {
+        
+        QueueFamilyIndices indices;
+        uint32_t queueFamilyCount = 0;
+        
+        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+        
+        std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+        
+        int i = 0;
+        
+        for (const auto& queueFamily: queueFamilies){
+            
+            if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT){
+                indices.graphicsFamily = i;
+            }
+            
+            if (indices.isComplete()) {
+                break;
+            }
+            
+            i ++;
+        }
+        
+        // Logic to find graphics queue family
+        // Assign index to queue families that could be found
+        return indices;
+        
+    }
+    
+
+    
+    
 };
 
 
