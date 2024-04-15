@@ -1,12 +1,12 @@
 #define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h> /// GLFW will include its own definitions and automatically load the vulkan header with it
+#include <GLFW/glfw3.h> // GLFW will include its own definitions and automatically load the vulkan header with it
 
-#include <iostream>   /// To report and propagate errors
-#include <stdexcept> /// To report and propagate errors
-#include <cstdlib> ///  provides the EXIT_SUCCESS and EXIT_FAILURE macros.
+#include <iostream>   // To report and propagate errors
+#include <stdexcept> // To report and propagate errors
+#include <cstdlib> //  provides the EXIT_SUCCESS and EXIT_FAILURE macros.
 #include <vector>
-#include <cstring> /// for strcmp
-#include <optional> /// to query if a variable contains a value
+#include <cstring> // for strcmp
+#include <optional> // to query if a variable contains a value
 
 class HelloTriangleApplication {
     
@@ -15,11 +15,10 @@ public:
     const uint32_t WIDTH = 800;
     const uint32_t HEIGHT = 600;
     
-    /// the graphics card will be stored in a `VkPhysicalDevice handle`
-    VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
     
-    /// class member to store the logical device handle
-    VkDevice device;
+    VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;   // the graphics card will be stored in a `VkPhysicalDevice handle`
+    VkDevice device;    // class member to store the logical device handle
+    VkQueue graphicsQueue; //   class member to store a handle to the graphics  queue
     
     const std::vector<const char*> validationLayers = {
         "VK_LAYER_KHRONOS_validation"
@@ -235,6 +234,9 @@ private:
             throw std::runtime_error("Failed to find GPUS with vulkan support!");
         }
         
+        std::cout << "Number of GPUs: " << deviceCount << std::endl;
+        std::cout << "Physical Device: " << physicalDevice << std::endl; //    should be null for now
+        
         /// otherwise, we can now allocate an array to hold all the VkPhysicalDevice handles
         std::vector<VkPhysicalDevice> devices(deviceCount);
         vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
@@ -245,12 +247,19 @@ private:
         /// And we will check if any of the physical devices meet the requirements that we will add to the function
         
         for (const auto& device : devices) {
+            
+            /// log out the devices
+            std::cout << "GPU: " << device << std::endl;
+            
+            
             if (isDeviceSuitable(device)) {
-                physicalDevice = device;
-                break;
+                physicalDevice = device; // assign this device to the device handler
+                break; // break once a suitable device is found
             }
         }
         
+        //  After the iteration, if the device handler is still none
+        //  Then no suitable device was found
         if (physicalDevice == VK_NULL_HANDLE) {
             throw std::runtime_error("Failed to find a suitable GPU!");
         }
@@ -272,12 +281,18 @@ private:
         
         vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
         
+        std::cout << "Queue Family Count: " << queueFamilyCount << std::endl;
+        
         std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
         vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+        
         
         int i = 0;
         
         for (const auto& queueFamily: queueFamilies){
+            
+            std::cout << "Queue Flag: " << queueFamily.queueFlags << std::endl;
+            std::cout << "Queue Count: " << queueFamily.queueCount << std::endl;
             
             if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT){
                 indices.graphicsFamily = i;
@@ -294,8 +309,11 @@ private:
         // Assign index to queue families that could be found
         return indices;
         
+        
+        
     }
     
+        
     /// After selecting a physical device, a `logical device` needs to be setup to interface with it
     /// This creation process is similar to the instance creation process and describes the features we want to use
     /// We also need to specify which queues to create now that we've queried which queue families are available
