@@ -1,5 +1,11 @@
+//  MVK is MoltenVK
+//  It is a Vulkan Portability implementation that layers the Vulkan graphics and compute
+//  API over Apple's Metal graphics framework
+//#define VK_USE_PLATFORM_MACOS_MVK // for macOSX
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h> // GLFW will include its own definitions and automatically load the vulkan header with it
+//#define GLFW_EXPOSE_NATIVE_COCOA // for macOSX
+//#include <GLFW/glfw3native.h>
 
 #include <iostream>   // To report and propagate errors
 #include <stdexcept> // To report and propagate errors
@@ -51,6 +57,7 @@ private:
     
     GLFWwindow* window;
     VkInstance instance;
+    VkSurfaceKHR surface;
     uint32_t glfwExtensionCount = 0;
     uint32_t deviceCount = 0;
     const char** glfwExtensions;
@@ -126,7 +133,11 @@ private:
         
         std::vector<const char*> requiredExtensions;
         
+        std::cout << "Required Extensions: " << std::endl;
+        
         for(uint32_t i = 0; i < glfwExtensionCount; i++) {
+            
+            std::cout << glfwExtensions[i] << std::endl;
             requiredExtensions.emplace_back(glfwExtensions[i]);
         }
         
@@ -139,6 +150,21 @@ private:
         createInfo.ppEnabledExtensionNames = requiredExtensions.data();
         
         /// TO HERE FIXES VK_ERROR_INCOMPATIBLE_DRIVER
+        
+        //  FROM HERE: Check extensions
+        uint32_t extensionCount = 0;
+        vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
+        
+        std::vector<VkExtensionProperties> extensions(extensionCount);
+        vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
+        
+        std::cout << "available extensions:\n";
+        
+        for (const auto& extension : extensions) {
+            std::cout << '\t' << extension.extensionName << '\n';
+        }
+        
+        //  TO HERE
     
         
         /// create the instance and store the result in the `result` variable
@@ -158,6 +184,7 @@ private:
 
     void initVulkan() {
         createInstance();
+        createSurface();
         pickPhysicalDevice();
         createLogicalDevice();
     }
@@ -178,6 +205,7 @@ private:
     /// The device should be destroyed before instance termination
     void cleanup() {
         vkDestroyDevice(device, nullptr);
+        vkDestroySurfaceKHR(instance, surface, nullptr);
         vkDestroyInstance(instance, nullptr);
         glfwDestroyWindow(window);
         glfwTerminate();
@@ -366,6 +394,15 @@ private:
         if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
             throw std::runtime_error("Failed to create logical device");
         }
+    }
+    
+    //  the glfwCreateWindowSurface function performs the surface creation very well with different implementation for each platform
+    void createSurface() {
+        
+        if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS) {
+            throw std::runtime_error("Failed to create window surface");
+        }
+        
     }
     
 
