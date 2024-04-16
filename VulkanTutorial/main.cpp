@@ -32,10 +32,12 @@ public:
     
     struct QueueFamilyIndices {
         std::optional<uint32_t> graphicsFamily;
+        std::optional<uint32_t> presentFamily;  //  presentation queue
         
         /// to make this a little bit more convenient, we will add a generic check to this struct
         bool isComplete(){
-            return graphicsFamily.has_value();
+            return graphicsFamily.has_value() &&
+                   presentFamily.has_value();
         }
     };
     
@@ -306,8 +308,10 @@ private:
         
         QueueFamilyIndices indices;
         uint32_t queueFamilyCount = 0;
+        VkBool32 presentSupport = 0;
         
         vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+        
         
         std::cout << "Queue Family Count: " << queueFamilyCount << std::endl;
         
@@ -324,6 +328,15 @@ private:
             
             if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT){
                 indices.graphicsFamily = i;
+            }
+            
+            // check that it has the capability to presenting to our window surface
+            vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
+            
+            std::cout << "It can present to our window surface: " << presentSupport << std::endl;
+            
+            if (presentSupport) {
+                indices.presentFamily = i;
             }
             
             if (indices.isComplete()) {
