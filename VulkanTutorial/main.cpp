@@ -25,6 +25,7 @@ public:
     VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;   // the graphics card will be stored in a `VkPhysicalDevice handle`
     VkDevice device;    // class member to store the logical device handle
     VkQueue graphicsQueue; //   class member to store a handle to the graphics  queue
+    VkQueue presentQueue; //    class member to handle the presentation queue
     
     const std::vector<const char*> validationLayers = {
         "VK_LAYER_KHRONOS_validation"
@@ -308,12 +309,12 @@ private:
         
         QueueFamilyIndices indices;
         uint32_t queueFamilyCount = 0;
-        VkBool32 presentSupport = 0;
+        VkBool32 presentSupport = false;
         
         vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
         
         
-        std::cout << "Queue Family Count: " << queueFamilyCount << std::endl;
+        std::cout << "Number of Queue families supported by the GPU: " << queueFamilyCount << std::endl;
         
         std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
         vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
@@ -328,6 +329,7 @@ private:
             
             if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT){
                 indices.graphicsFamily = i;
+                std::cout << "Graphics Family Index: " << indices.graphicsFamily.value() << std::endl;
             }
             
             // check that it has the capability to presenting to our window surface
@@ -380,7 +382,7 @@ private:
         VkPhysicalDeviceFeatures deviceFeatures{};
         
         /// Creating the logical device
-        /// with the previous tow structures in place, we can start filling in the main `VkDeviceCreateInfo` structure
+        /// with the previous two structures in place, we can start filling in the main `VkDeviceCreateInfo` structure
         VkDeviceCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
         
@@ -407,6 +409,8 @@ private:
         if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
             throw std::runtime_error("Failed to create logical device");
         }
+        
+        vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
     }
     
     //  the glfwCreateWindowSurface function performs the surface creation very well with different implementation for each platform
