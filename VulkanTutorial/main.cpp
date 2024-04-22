@@ -1,19 +1,4 @@
-//  MVK is MoltenVK
-//  It is a Vulkan Portability implementation that layers the Vulkan graphics and compute
-//  API over Apple's Metal graphics framework
-//#define VK_USE_PLATFORM_MACOS_MVK // for macOSX
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h> // GLFW will include its own definitions and automatically load the vulkan header with it
-//#define GLFW_EXPOSE_NATIVE_COCOA // for macOSX
-//#include <GLFW/glfw3native.h>
-#include "physicalDevice.hpp"
-
-#include <iostream>   // To report and propagate errors
-#include <stdexcept> // To report and propagate errors
-#include <cstdlib> //  provides the EXIT_SUCCESS and EXIT_FAILURE macros.
-#include <vector>
-#include <cstring> // for strcmp
-#include <optional> // to query if a variable contains a value
+#include "physicalDeviceHandler.hpp"
 
 class HelloTriangleApplication {
     
@@ -23,7 +8,7 @@ public:
     const uint32_t HEIGHT = 600;
     
     PhysicalDeviceHandler physicalDeviceHandler;
-    VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;   // the graphics card will be stored in a `VkPhysicalDevice handle`
+   /* VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;*/   // the graphics card will be stored in a `VkPhysicalDevice handle`
     VkDevice device;    // class member to store the logical device handle
     VkQueue graphicsQueue; //   class member to store a handle to the graphics  queue
     VkQueue presentQueue; //    class member to handle the presentation queue
@@ -372,7 +357,7 @@ private:
         /// This struct describes the number of queues we want for a single queue family
         /// Right now, we're only interested in a queue with graphics capabilities
         
-        QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
+        QueueFamilyIndices indices = findQueueFamilies(physicalDeviceHandler.physicalDevice);
         
         VkDeviceQueueCreateInfo queueCreateInfo{};
         queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
@@ -410,7 +395,7 @@ private:
             createInfo.enabledLayerCount = 0;
         }
         
-        if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
+        if (vkCreateDevice(physicalDeviceHandler.physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
             throw std::runtime_error("Failed to create logical device");
         }
         

@@ -8,14 +8,17 @@
 #include <stdexcept> // To report and propagate errors
 #include <cstdlib> //  provides the EXIT_SUCCESS and EXIT_FAILURE macros.
 #include <vector>
-
+#include <cstring> // for strcmp
+#include <optional> // to query if a variable contains a value
 
 class PhysicalDeviceHandler {
     
-    //  The graphics card that will be selected will be stored in this handle
-    VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+    
     
 public:
+    
+    //  The graphics card that will be selected will be stored in this handle
+    static constexpr VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
     
     void pickPhysicalDevice() {
         std::cout << "Header Working" << std::endl;

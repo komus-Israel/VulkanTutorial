@@ -32,7 +32,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		C813E8D32BD6F5120040EAAA /* physicalDevice.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = physicalDevice.hpp; sourceTree = "<group>"; };
+		C813E8D32BD6F5120040EAAA /* physicalDeviceHandler.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = physicalDeviceHandler.hpp; sourceTree = "<group>"; };
 		C89CC7AF2B70227500483CFA /* libvulkan.1.3.275.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvulkan.1.3.275.dylib; path = ../../../../VulkanSDK/macOS/lib/libvulkan.1.3.275.dylib; sourceTree = "<group>"; };
 		C89CC7B12B70227C00483CFA /* libvulkan.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvulkan.1.dylib; path = ../../../../VulkanSDK/macOS/lib/libvulkan.1.dylib; sourceTree = "<group>"; };
 		C89CC7B32B70231500483CFA /* libglfw.3.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.3.dylib; path = ../../../../../../opt/homebrew/Cellar/glfw/3.3.9/lib/libglfw.3.3.dylib; sourceTree = "<group>"; };
@@ -85,7 +85,7 @@
 			isa = PBXGroup;
 			children = (
 				C8FB3A572B6D447200EBE599 /* main.cpp */,
-				C813E8D32BD6F5120040EAAA /* physicalDevice.hpp */,
+				C813E8D32BD6F5120040EAAA /* physicalDeviceHandler.hpp */,
 			);
 			path = VulkanTutorial;
 			sourceTree = "<group>";
