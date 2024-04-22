@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h> // GLFW will include its own definitions and automatically load the vulkan header with it
 //#define GLFW_EXPOSE_NATIVE_COCOA // for macOSX
 //#include <GLFW/glfw3native.h>
+#include "physicalDevice.hpp"
 
 #include <iostream>   // To report and propagate errors
 #include <stdexcept> // To report and propagate errors
@@ -21,7 +22,7 @@ public:
     const uint32_t WIDTH = 800;
     const uint32_t HEIGHT = 600;
     
-    
+    PhysicalDeviceHandler physicalDeviceHandler;
     VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;   // the graphics card will be stored in a `VkPhysicalDevice handle`
     VkDevice device;    // class member to store the logical device handle
     VkQueue graphicsQueue; //   class member to store a handle to the graphics  queue
@@ -161,11 +162,11 @@ private:
         std::vector<VkExtensionProperties> extensions(extensionCount);
         vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
         
-        std::cout << "available extensions:\n";
-        
-        for (const auto& extension : extensions) {
-            std::cout << '\t' << extension.extensionName << '\n';
-        }
+//        std::cout << "available extensions:\n";
+//        
+//        for (const auto& extension : extensions) {
+//            std::cout << '\t' << extension.extensionName << '\n';
+//        }
         
         //  TO HERE
     
@@ -188,7 +189,7 @@ private:
     void initVulkan() {
         createInstance();
         createSurface();
-        pickPhysicalDevice();
+        physicalDeviceHandler.pickPhysicalDevice();
         createLogicalDevice();
     }
     
@@ -254,50 +255,50 @@ private:
         return true;
     }
     
-    /// After initializing vulkan lib via the VkInstance, we need to look for and select a graphics card in the system tjat supports the feature we need
-    void pickPhysicalDevice(){
-        
-        /// Listing the graphics card is very similar to the listing extensions and starts with querying just the number
-        vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
-        
-        /// If there are 0 devices with vulkan support then there is no point going further
-        if (deviceCount == 0) {
-            throw std::runtime_error("Failed to find GPUS with vulkan support!");
-        }
-        
-        std::cout << "Number of GPUs: " << deviceCount << std::endl;
-        std::cout << "Physical Device: " << physicalDevice << std::endl; //    should be null for now
-        
-        /// otherwise, we can now allocate an array to hold all the VkPhysicalDevice handles
-        std::vector<VkPhysicalDevice> devices(deviceCount);
-        vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
-        
-        /// Now, we need to evaluate each of them and check if they are
-        /// suitable for the operations we want to perform because not all graphics cards are created equal
-        /// for this, call the function created for this purpose `isDeviceSuitable`
-        /// And we will check if any of the physical devices meet the requirements that we will add to the function
-        
-        for (const auto& device : devices) {
-            
-            /// log out the devices
-            std::cout << "GPU: " << device << std::endl;
-            
-            
-            if (isDeviceSuitable(device)) {
-                physicalDevice = device; // assign this device to the device handler
-                break; // break once a suitable device is found
-            }
-        }
-        
-        //  After the iteration, if the device handler is still none
-        //  Then no suitable device was found
-        if (physicalDevice == VK_NULL_HANDLE) {
-            throw std::runtime_error("Failed to find a suitable GPU!");
-        }
-        
-    
-        
-    }
+    /// After initializing vulkan lib via the VkInstance, we need to look for and select a graphics card in the system that supports the feature we need
+//    void pickPhysicalDevice(){
+//        
+//        /// Listing the graphics card is very similar to the listing extensions and starts with querying just the number
+//        vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+//        
+//        /// If there are 0 devices with vulkan support then there is no point going further
+//        if (deviceCount == 0) {
+//            throw std::runtime_error("Failed to find GPUS with vulkan support!");
+//        }
+//        
+//        std::cout << "Number of GPUs: " << deviceCount << std::endl;
+//        std::cout << "Physical Device: " << physicalDevice << std::endl; //    should be null for now
+//        
+//        /// otherwise, we can now allocate an array to hold all the VkPhysicalDevice handles
+//        std::vector<VkPhysicalDevice> devices(deviceCount);
+//        vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
+//        
+//        /// Now, we need to evaluate each of them and check if they are
+//        /// suitable for the operations we want to perform because not all graphics cards are created equal
+//        /// for this, call the function created for this purpose `isDeviceSuitable`
+//        /// And we will check if any of the physical devices meet the requirements that we will add to the function
+//        
+//        for (const auto& device : devices) {
+//            
+//            /// log out the devices
+//            std::cout << "GPU: " << device << std::endl;
+//            
+//            
+//            if (isDeviceSuitable(device)) {
+//                physicalDevice = device; // assign this device to the device handler
+//                break; // break once a suitable device is found
+//            }
+//        }
+//        
+//        //  After the iteration, if the device handler is still none
+//        //  Then no suitable device was found
+//        if (physicalDevice == VK_NULL_HANDLE) {
+//            throw std::runtime_error("Failed to find a suitable GPU!");
+//        }
+//        
+//    
+//        
+//    }
     
     bool isDeviceSuitable(VkPhysicalDevice device) {
         QueueFamilyIndices indices = findQueueFamilies(device);
@@ -311,12 +312,15 @@ private:
         uint32_t queueFamilyCount = 0;
         VkBool32 presentSupport = false;
         
+        //  Get the number of queue families supported by the selected GPU
         vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
         
         
-        std::cout << "Number of Queue families supported by the GPU: " << queueFamilyCount << std::endl;
+        std::cout << "Number of    Queue families supported by the GPU: " << queueFamilyCount << std::endl;
         
         std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+        
+        //  Get the list of queue families supported by the selected GPU
         vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
         
         
@@ -326,7 +330,7 @@ private:
             
             std::cout << "Queue Flag: " << queueFamily.queueFlags << std::endl;
             std::cout << "Queue Count: " << queueFamily.queueCount << std::endl;
-            
+                        
             if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT){
                 indices.graphicsFamily = i;
                 std::cout << "Graphics Family Index: " << indices.graphicsFamily.value() << std::endl;
