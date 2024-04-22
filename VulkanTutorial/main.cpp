@@ -2,13 +2,14 @@
 
 class HelloTriangleApplication {
     
+    PhysicalDeviceHandler physicalDeviceHandler;
+    
 public:
     
     const uint32_t WIDTH = 800;
     const uint32_t HEIGHT = 600;
     
-    PhysicalDeviceHandler physicalDeviceHandler;
-   /* VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;*/   // the graphics card will be stored in a `VkPhysicalDevice handle`
+    
     VkDevice device;    // class member to store the logical device handle
     VkQueue graphicsQueue; //   class member to store a handle to the graphics  queue
     VkQueue presentQueue; //    class member to handle the presentation queue
@@ -174,7 +175,7 @@ private:
     void initVulkan() {
         createInstance();
         createSurface();
-        physicalDeviceHandler.pickPhysicalDevice();
+        handlePhysicalDevice();
         createLogicalDevice();
     }
     
@@ -284,6 +285,10 @@ private:
 //    
 //        
 //    }
+    
+    void handlePhysicalDevice() {
+        physicalDeviceHandler.pickPhysicalDevice(instance);
+    }
     
     bool isDeviceSuitable(VkPhysicalDevice device) {
         QueueFamilyIndices indices = findQueueFamilies(device);

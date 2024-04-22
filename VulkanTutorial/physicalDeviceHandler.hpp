@@ -13,14 +13,17 @@
 
 class PhysicalDeviceHandler {
     
-    
+private:
+    uint32_t physicalDeviceCount = 0;
     
 public:
+    
     
     //  The graphics card that will be selected will be stored in this handle
     static constexpr VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
     
-    void pickPhysicalDevice() {
+    void pickPhysicalDevice(VkInstance instance) {
+        vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, nullptr);
         std::cout << "Header Working" << std::endl;
     }
     
