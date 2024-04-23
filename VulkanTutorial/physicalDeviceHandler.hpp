@@ -2,14 +2,8 @@
 #ifndef physicalDevice_hpp
 #define physicalDevice_hpp
 
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
-#include <iostream>   // To report and propagate errors
-#include <stdexcept> // To report and propagate errors
-#include <cstdlib> //  provides the EXIT_SUCCESS and EXIT_FAILURE macros.
-#include <vector>
-#include <cstring> // for strcmp
-#include <optional> // to query if a variable contains a value
+#include "queueFamiliesHandler.h"
+
 
 class PhysicalDeviceHandler {
     
@@ -20,6 +14,7 @@ public:
     
     //  The graphics card that will be selected will be stored in this handle
     VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+    QueueFamiliesHandler queueFamiliesHandler;
     
     void pickPhysicalDevice(VkInstance instance) {
         
@@ -61,8 +56,11 @@ public:
         
     }
     
+    //  Find the queue families for the device
+    //  Checks if the device supports the Graphics family queue
     bool isDeviceSuitable(VkPhysicalDevice physicalDevice) {
-        return true;
+        QueueFamiliesHandler::QueueFamilyIndices indices = queueFamiliesHandler.findQueueFamilies(physicalDevice);
+        return indices.isComplete();
     }
     
 };
