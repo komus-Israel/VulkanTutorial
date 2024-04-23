@@ -18,6 +18,9 @@ public:
     //  To store the logical device
     VkDevice device;
     
+    //  The queues are automatically created along with the logical device
+    VkQueue graphicsQueue;
+    
     void createLogicalDevice(VkPhysicalDevice physicalDevice){
         
         //  The creation involves specifying a bunch of details in structs
@@ -59,6 +62,8 @@ public:
             
             throw std::runtime_error("Failed to create logical device!");
         }
+        
+        vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
         
     }
     
