@@ -7,14 +7,16 @@ class LogicalDeviceHandler {
     //  After selecting a physical device to use,
     //  a logical device needs to be setup to interface with it
     
-    //  To store the logical device
-    VkDevice device;
+    
     
     //  QueueFamilies handler
     QueueFamiliesHandler queueFamiliesHandler;
     
     
 public:
+    
+    //  To store the logical device
+    VkDevice device;
     
     void createLogicalDevice(VkPhysicalDevice physicalDevice){
         
