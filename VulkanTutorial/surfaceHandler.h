@@ -1,11 +1,14 @@
 #ifndef surfaceHandler_h
 #define surfaceHandler_h
 
-#include "queueFamiliesHandler.h"
+#define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
+#include <iostream>   // To report and propagate errors
+#include <stdexcept> // To report and propagate errors
 
 class SurfaceHandler {
     
-    QueueFamiliesHandler queueFamiliesHandler;
+    
     
 public:
     VkSurfaceKHR surface;
