@@ -241,114 +241,11 @@ private:
         return true;
     }
     
-    /// After initializing vulkan lib via the VkInstance, we need to look for and select a graphics card in the system that supports the feature we need
-//    void pickPhysicalDevice(){
-//        
-//        /// Listing the graphics card is very similar to the listing extensions and starts with querying just the number
-//        vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
-//        
-//        /// If there are 0 devices with vulkan support then there is no point going further
-//        if (deviceCount == 0) {
-//            throw std::runtime_error("Failed to find GPUS with vulkan support!");
-//        }
-//        
-//        std::cout << "Number of GPUs: " << deviceCount << std::endl;
-//        std::cout << "Physical Device: " << physicalDevice << std::endl; //    should be null for now
-//        
-//        /// otherwise, we can now allocate an array to hold all the VkPhysicalDevice handles
-//        std::vector<VkPhysicalDevice> devices(deviceCount);
-//        vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
-//        
-//        /// Now, we need to evaluate each of them and check if they are
-//        /// suitable for the operations we want to perform because not all graphics cards are created equal
-//        /// for this, call the function created for this purpose `isDeviceSuitable`
-//        /// And we will check if any of the physical devices meet the requirements that we will add to the function
-//        
-//        for (const auto& device : devices) {
-//            
-//            /// log out the devices
-//            std::cout << "GPU: " << device << std::endl;
-//            
-//            
-//            if (isDeviceSuitable(device)) {
-//                physicalDevice = device; // assign this device to the device handler
-//                break; // break once a suitable device is found
-//            }
-//        }
-//        
-//        //  After the iteration, if the device handler is still none
-//        //  Then no suitable device was found
-//        if (physicalDevice == VK_NULL_HANDLE) {
-//            throw std::runtime_error("Failed to find a suitable GPU!");
-//        }
-//        
-//    
-//        
-//    }
     
     void handlePhysicalDevice() {
         physicalDeviceHandler.pickPhysicalDevice(instance);
     }
-    
-    bool isDeviceSuitable(VkPhysicalDevice device) {
-        QueueFamilyIndices indices = findQueueFamilies(device);
-        return indices.isComplete();
-    }
-    
-    /// We are going to look for a queue that supports graphics commands
-    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) {
-        
-        QueueFamilyIndices indices;
-        uint32_t queueFamilyCount = 0;
-        VkBool32 presentSupport = false;
-        
-        //  Get the number of queue families supported by the selected GPU
-        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
-        
-        
-        std::cout << "Number of    Queue families supported by the GPU: " << queueFamilyCount << std::endl;
-        
-        std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
-        
-        //  Get the list of queue families supported by the selected GPU
-        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
-        
-        
-        int i = 0;
-        
-        for (const auto& queueFamily: queueFamilies){
-            
-            std::cout << "Queue Flag: " << queueFamily.queueFlags << std::endl;
-            std::cout << "Queue Count: " << queueFamily.queueCount << std::endl;
-                        
-            if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT){
-                indices.graphicsFamily = i;
-                std::cout << "Graphics Family Index: " << indices.graphicsFamily.value() << std::endl;
-            }
-            
-            // check that it has the capability to presenting to our window surface
-            vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
-            
-            std::cout << "It can present to our window surface: " << presentSupport << std::endl;
-            
-            if (presentSupport) {
-                indices.presentFamily = i;
-            }
-            
-            if (indices.isComplete()) {
-                break;
-            }
-            
-            i ++;
-        }
-        
-        // Logic to find graphics queue family
-        // Assign index to queue families that could be found
-        return indices;
-        
-        
-        
-    }
+
     
         
     /// After selecting a physical device, a `logical device` needs to be setup to interface with it
@@ -362,11 +259,11 @@ private:
         /// This struct describes the number of queues we want for a single queue family
         /// Right now, we're only interested in a queue with graphics capabilities
         
-        QueueFamilyIndices indices = findQueueFamilies(physicalDeviceHandler.physicalDevice);
+//        QueueFamilyIndices indices = findQueueFamilies(physicalDeviceHandler.physicalDevice);
         
         VkDeviceQueueCreateInfo queueCreateInfo{};
         queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
+//        queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
         queueCreateInfo.queueCount = 1;
         
         float queuePriority = 1.0f;
@@ -404,7 +301,7 @@ private:
             throw std::runtime_error("Failed to create logical device");
         }
         
-        vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
+//        vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
     }
     
     //  the glfwCreateWindowSurface function performs the surface creation very well with different implementation for each platform
