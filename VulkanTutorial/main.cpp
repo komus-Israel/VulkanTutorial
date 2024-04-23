@@ -1,10 +1,12 @@
 #include "physicalDeviceHandler.hpp"
 #include "logicalDeviceHandler.h"
+#include "surfaceHandler.h"
 
 class HelloTriangleApplication {
     
     PhysicalDeviceHandler physicalDeviceHandler;
     LogicalDeviceHandler logicalDeviceHandler;
+    SurfaceHandler surfaceHandler;
     
 public:
     
@@ -33,7 +35,6 @@ private:
     
     GLFWwindow* window;
     VkInstance instance;
-    VkSurfaceKHR surface;
     uint32_t glfwExtensionCount = 0;
     const char** glfwExtensions;
     
@@ -159,7 +160,7 @@ private:
 
     void initVulkan() {
         createInstance();
-        createSurface();
+        handleSurface();
         handlePhysicalDevice();
         handleLogicalDevice();
     }
@@ -180,7 +181,7 @@ private:
     /// The device should be destroyed before instance termination
     void cleanup() {
         vkDestroyDevice(logicalDeviceHandler.device, nullptr);
-        vkDestroySurfaceKHR(instance, surface, nullptr);
+        vkDestroySurfaceKHR(instance, surfaceHandler.surface, nullptr);
         vkDestroyInstance(instance, nullptr);
         glfwDestroyWindow(window);
         glfwTerminate();
@@ -234,17 +235,10 @@ private:
     void handleLogicalDevice() {
         logicalDeviceHandler.createLogicalDevice(physicalDeviceHandler.physicalDevice);
     }
-
-    //  the glfwCreateWindowSurface function performs the surface creation very well with different implementation for each platform
-    void createSurface() {
-        
-        if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS) {
-            throw std::runtime_error("Failed to create window surface");
-        }
-        
-    }
     
-
+    void handleSurface() {
+        surfaceHandler.createSurface(instance, window);
+    }
     
     
 };
