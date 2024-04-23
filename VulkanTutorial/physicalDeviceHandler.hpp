@@ -49,7 +49,7 @@ public:
         
         //  Check if the physical device handler is still null
         if (physicalDevice == VK_NULL_HANDLE){
-            std::runtime_error("Failed to find a suitable GPU");
+            throw std::runtime_error("Failed to find a suitable GPU");
         } else {
             std::cout << "Suitable GPU found" << std::endl;
         }
