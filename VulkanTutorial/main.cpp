@@ -11,24 +11,8 @@ public:
     const uint32_t WIDTH = 800;
     const uint32_t HEIGHT = 600;
     
-    
-    VkDevice device;    // class member to store the logical device handle
-    VkQueue graphicsQueue; //   class member to store a handle to the graphics  queue
-    VkQueue presentQueue; //    class member to handle the presentation queue
-    
     const std::vector<const char*> validationLayers = {
         "VK_LAYER_KHRONOS_validation"
-    };
-    
-    struct QueueFamilyIndices {
-        std::optional<uint32_t> graphicsFamily;
-        std::optional<uint32_t> presentFamily;  //  presentation queue
-        
-        /// to make this a little bit more convenient, we will add a generic check to this struct
-        bool isComplete(){
-            return graphicsFamily.has_value() &&
-                   presentFamily.has_value();
-        }
     };
     
 /// `NDEBUG` macro is a c++ standard. It means `not debug`
@@ -51,7 +35,6 @@ private:
     VkInstance instance;
     VkSurfaceKHR surface;
     uint32_t glfwExtensionCount = 0;
-    uint32_t deviceCount = 0;
     const char** glfwExtensions;
     
     /// To initialize GLFW
@@ -196,7 +179,7 @@ private:
     /// VkInstance should be only destroyed right before the program exits. It can be destroyed using the `vkDestroyInstance` function
     /// The device should be destroyed before instance termination
     void cleanup() {
-        vkDestroyDevice(device, nullptr);
+        vkDestroyDevice(logicalDeviceHandler.device, nullptr);
         vkDestroySurfaceKHR(instance, surface, nullptr);
         vkDestroyInstance(instance, nullptr);
         glfwDestroyWindow(window);
