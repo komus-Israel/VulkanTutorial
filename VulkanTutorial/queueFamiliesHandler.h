@@ -17,14 +17,17 @@ public:
     
     struct QueueFamilyIndices {
         std::optional<uint32_t> graphicsFamily;
+        std::optional<uint32_t> presentFamily;
         
         bool isComplete() {
-            return graphicsFamily.has_value();
+            return graphicsFamily.has_value() && presentFamily.has_value();
         }
     };
     
     //  Look for the queue that supports graphics command
-    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice physicalDevice) {
+    //  Look for the queue that also has the capability of presenting to
+    //  the surface window using `vkGetPhysicalDeviceSurfaceSupportKHR`
+    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface) {
         QueueFamilyIndices indices;
         
         //  Logic to find queue family indices to populate struct with
@@ -44,9 +47,21 @@ public:
         
         //  find at least one queue that supports VK_QUEUE_GRAPHICS_BIT
         int index = 0;
+        
+        //  handler to store present support
+        VkBool32 presentSupport = VK_FALSE;
+        vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, index, surface, &presentSupport);
+        
+        //  Log the presentation support state
+        std::cout << "Does GPU support presentation on surface: " << presentSupport << std::endl;
+        
         for (const auto& queueFamily : queueFamily) {
             if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
                 indices.graphicsFamily = index;
+            
+            if (presentSupport) {
+                indices.presentFamily = index;
+            }
             
             //  Break if queue family has been found
             if (indices.isComplete()){
