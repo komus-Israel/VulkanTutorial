@@ -21,13 +21,13 @@ public:
     //  The queues are automatically created along with the logical device
     VkQueue graphicsQueue;
     
-    void createLogicalDevice(VkPhysicalDevice physicalDevice){
+    void createLogicalDevice(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface){
         
         //  The creation involves specifying a bunch of details in structs
         //  The first one will be `VkDeviceQueueCreateInfo`
         //  This structure describes the number of queues we want for a single queue family
         
-        QueueFamiliesHandler::QueueFamilyIndices indices = queueFamiliesHandler.findQueueFamilies(physicalDevice);
+        QueueFamiliesHandler::QueueFamilyIndices indices = queueFamiliesHandler.findQueueFamilies(physicalDevice, surface);
         
         VkDeviceQueueCreateInfo queueCreateInfo{};
         

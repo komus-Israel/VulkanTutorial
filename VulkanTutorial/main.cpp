@@ -229,11 +229,11 @@ private:
     
     
     void handlePhysicalDevice() {
-        physicalDeviceHandler.pickPhysicalDevice(instance);
+        physicalDeviceHandler.pickPhysicalDevice(instance, surfaceHandler.surface);
     }
     
     void handleLogicalDevice() {
-        logicalDeviceHandler.createLogicalDevice(physicalDeviceHandler.physicalDevice);
+        logicalDeviceHandler.createLogicalDevice(physicalDeviceHandler.physicalDevice, surfaceHandler.surface);
     }
     
     void handleSurface() {

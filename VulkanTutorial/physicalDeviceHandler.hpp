@@ -16,7 +16,7 @@ public:
     VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
     QueueFamiliesHandler queueFamiliesHandler;
     
-    void pickPhysicalDevice(VkInstance instance) {
+    void pickPhysicalDevice(VkInstance instance, VkSurfaceKHR surface) {
         
         
         
@@ -40,7 +40,7 @@ public:
         // If any of the GPUs meet the requirement, that GPU is selected
         for (const auto& device : physicalDevices) {
             
-            if (isDeviceSuitable(device)) {
+            if (isDeviceSuitable(device, surface)) {
                 physicalDevice = device;
                 break;
             }
@@ -58,8 +58,8 @@ public:
     
     //  Find the queue families for the device
     //  Checks if the device supports the Graphics family queue
-    bool isDeviceSuitable(VkPhysicalDevice physicalDevice) {
-        QueueFamiliesHandler::QueueFamilyIndices indices = queueFamiliesHandler.findQueueFamilies(physicalDevice);
+    bool isDeviceSuitable(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface) {
+        QueueFamiliesHandler::QueueFamilyIndices indices = queueFamiliesHandler.findQueueFamilies(physicalDevice, surface);
         return indices.isComplete();
     }
     
