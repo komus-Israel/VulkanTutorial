@@ -8,7 +8,11 @@
 
 class SurfaceHandler {
     
-    
+    //  Vulkan is a platform agnostic API, it cannot interface directly with the
+    //  window system on its own
+    //  WSI extensions such as VkSurfaceKHR are needed to establish
+    //  connection between Vulkan and the window system to present
+    //  results to the screen
     
 public:
     VkSurfaceKHR surface;
